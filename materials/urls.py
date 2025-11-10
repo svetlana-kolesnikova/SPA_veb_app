@@ -2,6 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CourseViewSet, LessonListCreateAPIView, LessonRetrieveUpdateDestroyAPIView
 
+app_name = "materials"
+
 router = DefaultRouter()
 router.register('courses', CourseViewSet)
 
