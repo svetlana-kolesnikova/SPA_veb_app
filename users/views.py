@@ -1,26 +1,61 @@
+# users/views.py
+from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, generics, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .models import Payment, User
-from .serializers import PaymentSerializer, UserSerializer
+from .models import Payment
+from .permissions import IsOwner
+from .serializers import PaymentSerializer, RegisterSerializer, UserSerializer
+
+User = get_user_model()
+
+
+class RegisterAPIView(generics.CreateAPIView):
+    """
+    Регистрация нового пользователя — доступна всем (AllowAny).
+    """
+
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """ViewSet для работы с моделью User"""
+    """
+    ViewSet для пользователей.
+    - list/retrieve/update/partial_update/delete доступны только авторизованным.
+    - редактировать свой профиль может только владелец (см. get_permissions below).
+    """
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def get_permissions(self):
+        # allow anyone to create via RegisterAPIView, but ModelViewSet routes require auth
+        if self.action in ["list", "retrieve"]:
+            # просмотр профиля — любой авторизованный
+            permission_classes = [IsAuthenticated]
+        elif self.action in ["update", "partial_update", "destroy"]:
+            # редактировать/удалять — только владелец (или admin через is_staff)
+            permission_classes = [IsAuthenticated, IsOwner]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [perm() for perm in permission_classes]
+
 
 class PaymentViewSet(viewsets.ModelViewSet):
     """
-    ViewSet для управления платежами.
-    Реализует фильтрацию по курсу, уроку и способу оплаты, а также сортировку по дате оплаты.
+    ViewSet для платежей с фильтрацией и сортировкой.
+    Доступ: только авторизованные пользователи.
     """
 
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ["course", "lesson", "payment_method"]
-    ordering_fields = ["payment_date"]
-    ordering = ["-payment_date"]  # по умолчанию — последние платежи первыми
+    filterset_fields = ["course", "lesson", "payment_method", "user"]
+    ordering_fields = ["payment_date", "amount"]
+    ordering = ["-payment_date"]
+
+    def get_permissions(self):
+        # все операции над платежами — для авторизованных (в проекте не указано иное)
+        return [IsAuthenticated()]
