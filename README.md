@@ -109,28 +109,37 @@ python manage.py runserver
 
 - course — связь с Course (один курс → много уроков)
 
+### Subscription (Подписка на курс)
+
+- user — ссылка на пользователя
+
+- course — ссылка на курс
+
+- позволяет отслеживать, подписан ли пользователь на обновления курса
+
 ---
 
 ## API Эндпоинтыv
 
 ### Курсы — ViewSet
-| Метод     | URL                  | Описание                                |
-| --------- | -------------------- | --------------------------------------- |
-| GET       | `/api/courses/`      | список курсов (с количеством и уроками) |
-| POST      | `/api/courses/`      | создать курс                            |
-| GET       | `/api/courses/<id>/` | получить курс                           |
-| PUT/PATCH | `/api/courses/<id>/` | обновить курс                           |
-| DELETE    | `/api/courses/<id>/` | удалить курс                            |
+| Метод     | URL                  | Описание                                                          |
+| --------- | -------------------- | ----------------------------------------------------------------- |
+| GET       | `/api/courses/`      | список курсов (с количеством и уроками, поддерживается пагинация) |
+| POST      | `/api/courses/`      | создать курс                                                      |
+| GET       | `/api/courses/<id>/` | получить курс                                                     |
+| PUT/PATCH | `/api/courses/<id>/` | обновить курс                                                     |
+| DELETE    | `/api/courses/<id>/` | удалить курс                                                      |
+
 
 
 ### Уроки — Generic Views
-| Метод     | URL                  | Описание      |
-| --------- | -------------------- | ------------- |
-| GET       | `/api/lessons/`      | список уроков |
-| POST      | `/api/lessons/`      | создать урок  |
-| GET       | `/api/lessons/<id>/` | получить урок |
-| PUT/PATCH | `/api/lessons/<id>/` | изменить урок |
-| DELETE    | `/api/lessons/<id>/` | удалить урок  |
+| Метод     | URL                  | Описание                                 |
+| --------- | -------------------- | ---------------------------------------- |
+| GET       | `/api/lessons/`      | список уроков (с пагинацией)             |
+| POST      | `/api/lessons/`      | создать урок (валидатор ссылок на видео) |
+| GET       | `/api/lessons/<id>/` | получить урок                            |
+| PUT/PATCH | `/api/lessons/<id>/` | изменить урок                            |
+| DELETE    | `/api/lessons/<id>/` | удалить урок                             |
 
 
 ### Пользователи — ViewSet
@@ -142,6 +151,13 @@ python manage.py runserver
 | PUT/PATCH | `/api/users/<id>/` | изменить данные                           |
 | DELETE    | `/api/users/<id>/` | удалить пользователя                      |
 
+
+### Подписка на курс
+| Метод  | URL                              | Описание                                                  |
+| ------ | -------------------------------- | --------------------------------------------------------- |
+| POST   | `/api/courses/<id>/subscribe/`   | подписаться на курс                                       |
+| DELETE | `/api/courses/<id>/unsubscribe/` | отписаться от курса                                       |
+| GET    | `/api/courses/<id>/`             | возвращает поле `is_subscribed` для текущего пользователя |
 
 
 ### Платежи (ViewSet + фильтрация)
@@ -158,15 +174,30 @@ python manage.py runserver
 
 ___
 
+Для уроков и курсов используется класс пагинации [StandardResultsSetPagination](materials%2Fpaginators.py)
+
+Валидация ссылок [validators.py](materials%2Fvalidators.py)
+
+Тесты [tests.py](materials%2Ftests.py)
+
+___
 ## Требования
 
 Файл pyproject.toml должен включать:
 ```bash
 [tool.poetry.dependencies]
-python = "^3.11"
-django = "^5.0"
-djangorestframework = "^3.15"
-pillow = "^10.0"
+"django (>=5.2.8,<6.0.0)",
+"djangorestframework (>=3.16.1,<4.0.0)",
+"pillow (>=12.0.0,<13.0.0)",
+"dotenv (>=0.9.9,<0.10.0)",
+"psycopg2 (>=2.9.11,<3.0.0)",
+"django-filter (>=25.2,<26.0)",
+"djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
+"ipython (>=9.7.0,<10.0.0)",
+"pytest (>=9.0.1,<10.0.0)",
+"pytest-django (>=4.11.1,<5.0.0)",
+"coverage (>=7.11.3,<8.0.0)"
+
 ```
 
 ___
