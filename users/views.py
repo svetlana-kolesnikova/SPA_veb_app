@@ -5,7 +5,7 @@ from rest_framework import filters, generics, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import Payment
-from .permissions import IsOwner
+from .permissions import IsOwner, IsModerator, IsOwnerOrModeratorOrStaff
 from .serializers import PaymentSerializer, RegisterSerializer, UserSerializer
 
 User = get_user_model()
@@ -31,15 +31,15 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        # allow anyone to create via RegisterAPIView, but ModelViewSet routes require auth
-        if self.action in ["list", "retrieve"]:
-            # просмотр профиля — любой авторизованный
-            permission_classes = [IsAuthenticated]
+        if self.action == "list":
+            permission_classes = [IsAuthenticated, IsModerator]  # только модеры могут видеть список
+        elif self.action == "retrieve":
+            permission_classes = [IsAuthenticated, IsOwnerOrModeratorOrStaff]
         elif self.action in ["update", "partial_update", "destroy"]:
-            # редактировать/удалять — только владелец (или admin через is_staff)
-            permission_classes = [IsAuthenticated, IsOwner]
+            permission_classes = [IsAuthenticated, IsOwner | IsModerator]
         else:
             permission_classes = [IsAuthenticated]
+
         return [perm() for perm in permission_classes]
 
 
