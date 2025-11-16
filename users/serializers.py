@@ -1,7 +1,7 @@
 # users/serializers.py
 from rest_framework import serializers
 
-from .models import Payment, User
+from .models import Payment, User, CourseSubscription
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -58,3 +58,12 @@ class UserSerializer(serializers.ModelSerializer):
             rep.pop("payments", None)
             rep.pop("last_name", None)
         return rep
+
+
+class CourseSubscriptionSerializer(serializers.ModelSerializer):
+    """Сериализатор для подписки"""
+
+    class Meta:
+        model = CourseSubscription
+        fields = ["id", "user", "course", "created_at"]
+        read_only_fields = ["id", "created_at", "user"]
