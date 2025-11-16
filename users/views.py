@@ -5,7 +5,7 @@ from rest_framework import filters, generics, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import Payment
-from .permissions import IsOwner, IsModerator, IsOwnerOrModeratorOrStaff
+from .permissions import IsModerator, IsOwner, IsOwnerOrModeratorOrStaff
 from .serializers import PaymentSerializer, RegisterSerializer, UserSerializer
 
 User = get_user_model()

@@ -1,6 +1,7 @@
 # materials/paginators.py
 from rest_framework.pagination import PageNumberPagination
 
+
 class StandardResultsSetPagination(PageNumberPagination):
     """
     Класс пагинации для материалов (курсы, уроки)

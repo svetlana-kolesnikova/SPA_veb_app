@@ -38,8 +38,4 @@ class IsOwnerOrModeratorOrStaff(BasePermission):
         if not user.is_authenticated:
             return False
 
-        return (
-            user == obj              # владелец
-            or user.is_staff         # модератор/admin
-            or user.is_superuser     # суперпользователь
-        )
+        return user == obj or user.is_staff or user.is_superuser  # владелец  # модератор/admin  # суперпользователь

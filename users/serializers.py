@@ -1,7 +1,7 @@
 # users/serializers.py
 from rest_framework import serializers
 
-from .models import Payment, User, CourseSubscription
+from .models import CourseSubscription, Payment, User
 
 
 class RegisterSerializer(serializers.ModelSerializer):

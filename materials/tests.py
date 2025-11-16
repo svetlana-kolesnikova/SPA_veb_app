@@ -1,11 +1,12 @@
 # materials/tests.py
-from django.urls import reverse
-from rest_framework.test import APITestCase, APIClient
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+from rest_framework.test import APIClient, APITestCase
+
 from users.models import CourseSubscription
-from materials.models import Course, Lesson
 
 User = get_user_model()
+
 
 class LessonsAndSubscriptionTests(APITestCase):
     """
@@ -37,7 +38,7 @@ class LessonsAndSubscriptionTests(APITestCase):
             "name": "Lesson 1",
             "description": "desc",
             "course": self.course_id,
-            "video_link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            "video_link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         }
         resp = self.client.post(reverse("materials:lesson-list-create"), lesson_data, format="json")
         self.assertEqual(resp.status_code, 201)
@@ -51,11 +52,7 @@ class LessonsAndSubscriptionTests(APITestCase):
         """
 
         self.client.force_authenticate(self.user1)
-        bad = {
-            "name": "Bad",
-            "course": self.course_id,
-            "video_link": "https://some-edu-platform.com/course/abc"
-        }
+        bad = {"name": "Bad", "course": self.course_id, "video_link": "https://some-edu-platform.com/course/abc"}
         resp = self.client.post(reverse("materials:lesson-list-create"), bad, format="json")
         self.assertEqual(resp.status_code, 400)
         self.assertIn("video_link", resp.data)
@@ -93,11 +90,15 @@ class LessonsAndSubscriptionTests(APITestCase):
 
         self.client.force_authenticate(self.user1)
         for i in range(12):
-            self.client.post(reverse("materials:lesson-list-create"), {
-                "name": f"L{i}",
-                "course": self.course_id,
-                "video_link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-            }, format="json")
+            self.client.post(
+                reverse("materials:lesson-list-create"),
+                {
+                    "name": f"L{i}",
+                    "course": self.course_id,
+                    "video_link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                },
+                format="json",
+            )
         resp = self.client.get(reverse("materials:lesson-list-create"))
         self.assertEqual(resp.status_code, 200)
 

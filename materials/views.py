@@ -1,9 +1,8 @@
 # materials/views.py
+from rest_framework import generics, status
 from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from users.models import CourseSubscription
@@ -45,8 +44,9 @@ class CourseViewSet(ModelViewSet):
         sub, created = CourseSubscription.objects.get_or_create(user=user, course=course)
         if not created:
             return Response({"detail": "Уже подписан."}, status=status.HTTP_200_OK)
-        return Response(CourseSubscriptionSerializer(sub, context={"request": request}).data,
-                        status=status.HTTP_201_CREATED)
+        return Response(
+            CourseSubscriptionSerializer(sub, context={"request": request}).data, status=status.HTTP_201_CREATED
+        )
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated], url_path="unsubscribe")
     def unsubscribe(self, request, pk=None):
