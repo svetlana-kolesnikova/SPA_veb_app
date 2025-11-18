@@ -2,18 +2,19 @@
 from rest_framework import serializers
 
 from .models import Course, Lesson
-from .validators import validate_video_link
+from .validators import VideoLinkValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализатор модели Lesson"""
 
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
-    video_link = serializers.URLField(required=False, allow_blank=True, validators=[validate_video_link])
+    video_link = serializers.URLField(required=False, allow_blank=True,)
 
     class Meta:
         model = Lesson
         fields = ["id", "name", "description", "preview", "video_link", "course", "owner"]
+        validators = [VideoLinkValidator(field="video_link")]
 
     def create(self, validated_data):
         """
