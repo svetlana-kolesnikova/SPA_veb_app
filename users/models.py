@@ -68,3 +68,20 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Платёж от {self.user.email} на {self.amount} ₽"
+
+
+class CourseSubscription(models.Model):
+    """
+    Подписка пользователя на обновления курса.
+    """
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="subscriptions")
+    course = models.ForeignKey("materials.Course", on_delete=models.CASCADE, related_name="subscribers")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "course")
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.user.email} -> {self.course.name}"
