@@ -31,12 +31,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["payment_date"]
 
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_staff or hasattr(user, "is_moderator") and user.is_moderator:
-            return Payment.objects.all()
-        return Payment.objects.filter(user=user)
-
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор пользователя с историей платежей"""
