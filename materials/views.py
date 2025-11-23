@@ -1,4 +1,5 @@
 # materials/views.py
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -14,6 +15,11 @@ from .paginators import StandardResultsSetPagination
 from .serializers import CourseSerializer, LessonSerializer
 
 
+@extend_schema(
+    summary="Получить список курсов",
+    description="Возвращает список всех курсов. Доступно всем аутентифицированным пользователям.",
+    responses={200: CourseSerializer(many=True)},
+)
 class CourseViewSet(ModelViewSet):
     """ViewSet для работы с моделью Course."""
 
@@ -33,9 +39,21 @@ class CourseViewSet(ModelViewSet):
 
         return [perm() for perm in permission_classes]
 
+    @extend_schema(
+        summary="Создать курс",
+        description="Создаёт новый курс и автоматически назначает текущего пользователя владельцем.",
+        responses={201: CourseSerializer},
+    )
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    @extend_schema(
+        summary="Подписаться / отписаться от курса",
+        description=(
+            "Если пользователь НЕ подписан — создаёт подписку.\n" "Если уже подписан — удаляет существующую."
+        ),
+        responses={200: OpenApiResponse(description="Подписка обновлена")},
+    )
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def subscribe(self, request, pk=None):
         """Подписаться на курс"""
@@ -60,6 +78,11 @@ class CourseViewSet(ModelViewSet):
         return Response({"detail": "Подписка не найдена."}, status=status.HTTP_404_NOT_FOUND)
 
 
+@extend_schema(
+    summary="Получить список уроков",
+    description="Возвращает список всех уроков. Пагинация включена.",
+    responses={200: LessonSerializer(many=True)},
+)
 class LessonListCreateAPIView(generics.ListCreateAPIView):
     """Представление для получения списка уроков и создания нового урока"""
 
@@ -75,6 +98,11 @@ class LessonListCreateAPIView(generics.ListCreateAPIView):
 
         return [perm() for perm in permission_classes]
 
+    @extend_schema(
+        summary="Создать урок",
+        description="Создаёт урок и автоматически назначает текущего пользователя владельцем.",
+        responses={201: LessonSerializer},
+    )
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 

@@ -1,5 +1,6 @@
 # materials/validators.py
 from urllib.parse import urlparse
+
 from rest_framework.serializers import ValidationError
 
 
@@ -37,4 +38,3 @@ class VideoLinkValidator:
             raise ValidationError({self.field: "Разрешены только ссылки на YouTube (youtube.com / youtu.be)."})
 
         return attrs
-
