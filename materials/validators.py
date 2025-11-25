@@ -14,9 +14,7 @@ class VideoLinkValidator:
         self.__fields__ = [field]
 
     def __call__(self, attrs):
-        """
-        Вызов валидатора.
-        """
+        """Вызов валидатора"""
 
         value = attrs.get(self.field) if isinstance(attrs, dict) else attrs
 
