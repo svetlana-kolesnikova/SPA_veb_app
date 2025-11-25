@@ -9,7 +9,10 @@ class LessonSerializer(serializers.ModelSerializer):
     """Сериализатор модели Lesson"""
 
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
-    video_link = serializers.URLField(required=False, allow_blank=True,)
+    video_link = serializers.URLField(
+        required=False,
+        allow_blank=True,
+    )
 
     class Meta:
         model = Lesson
