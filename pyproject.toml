@@ -22,7 +22,9 @@ dependencies = [
     "drf-spectacular (>=0.29.0,<0.30.0)",
     "drf-spectacular-sidecar (>=2025.10.1,<2026.0.0)",
     "stripe (>=14.0.0,<15.0.0)",
-    "drf-yasg (>=1.21.11,<2.0.0)"
+    "drf-yasg (>=1.21.11,<2.0.0)",
+    "celery (>=5.5.3,<6.0.0)",
+    "redis (>=7.1.0,<8.0.0)"
 ]
 
 

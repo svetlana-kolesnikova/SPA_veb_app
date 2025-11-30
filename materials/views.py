@@ -1,4 +1,7 @@
 # materials/views.py
+from datetime import timedelta
+
+from django.utils import timezone
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics, status
 from rest_framework.decorators import action
@@ -13,6 +16,7 @@ from users.serializers import CourseSubscriptionSerializer
 from .models import Course, Lesson
 from .paginators import StandardResultsSetPagination
 from .serializers import CourseSerializer, LessonSerializer
+from .tasks import send_course_update_email
 
 
 @extend_schema(
@@ -21,7 +25,9 @@ from .serializers import CourseSerializer, LessonSerializer
     responses={200: CourseSerializer(many=True)},
 )
 class CourseViewSet(ModelViewSet):
-    """ViewSet для работы с моделью Course."""
+    """
+    ViewSet для работы с моделью Course
+    """
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -77,6 +83,16 @@ class CourseViewSet(ModelViewSet):
             return Response({"detail": "Отписка выполнена."}, status=status.HTTP_200_OK)
         return Response({"detail": "Подписка не найдена."}, status=status.HTTP_404_NOT_FOUND)
 
+    def perform_update(self, serializer):
+        """Обновляет курс и при необходимости отправляет уведомления подписчикам"""
+        course = serializer.save()
+
+        # Проверка: если курс не обновлялся более 4 часов
+        if not course.updated_at or (timezone.now() - course.updated_at) > timedelta(hours=4):
+            subscribers = course.subscribers.all()
+            for sub in subscribers:
+                send_course_update_email.delay(sub.user.email, course.name)
+
 
 @extend_schema(
     summary="Получить список уроков",
@@ -84,7 +100,9 @@ class CourseViewSet(ModelViewSet):
     responses={200: LessonSerializer(many=True)},
 )
 class LessonListCreateAPIView(generics.ListCreateAPIView):
-    """Представление для получения списка уроков и создания нового урока"""
+    """
+    Представление для получения списка уроков и создания нового урока
+    """
 
     queryset = Lesson.objects.all().order_by("id")
     serializer_class = LessonSerializer
@@ -108,7 +126,9 @@ class LessonListCreateAPIView(generics.ListCreateAPIView):
 
 
 class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    """Представление для получения, изменения и удаления конкретного урока"""
+    """
+    Представление для получения, изменения и удаления конкретного урока
+    """
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer

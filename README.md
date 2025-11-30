@@ -13,6 +13,10 @@
 - Django REST Framework
 - Pillow (для загрузки изображений)
 - SQLite / PostgreSQL (на выбор)
+- Celery + Redis (асинхронные задачи)
+- Stripe (оплата курсов и уроков)
+- drf-yasg / drf-spectacular (Swagger / Redoc документация)
+- djangorestframework-simplejwt (JWT авторизация)
 
 ---
 
@@ -29,20 +33,28 @@ cd drf_project
 poetry install
 poetry shell
 ```
+### 3. Настроить .env файл
+[.env_sample](.env_sample)
 
-### 3. Применить миграции
+### 4. Применить миграции
 ```bash
 python manage.py migrate
 ```
 
-### 4. Создать суперпользователя (опционально)
+### 5. Создать суперпользователя (опционально)
 ```bash
 python manage.py createsuperuser
 ```
 
-### 5. Запустить сервер
+### 6. Запустить сервер
 ```bash
 python manage.py runserver
+```
+
+### 7. Запустить Celery (для email-уведомлений)
+```bash
+celery -A config worker -l info
+celery -A config beat -l info
 ```
 
 ---
@@ -84,6 +96,8 @@ python manage.py runserver
 
 - payment_method — способ оплаты (cash или transfer)
 
+- Хранение Stripe-сессий и URL для оплаты
+
 
 ### Course (Курс)
 
@@ -96,6 +110,7 @@ python manage.py runserver
 - lesson_count — автоматически вычисляемое количество уроков
 
 - lessons — список связанных уроков (вложенный сериализатор)
+
 
 ### Lesson (Урок)
 
@@ -117,18 +132,23 @@ python manage.py runserver
 
 - позволяет отслеживать, подписан ли пользователь на обновления курса
 
+- используется для отправки уведомлений при обновлении курса
+
+
 ---
 
 ## API Эндпоинтыv
 
 ### Курсы — ViewSet
-| Метод     | URL                  | Описание                                                          |
-| --------- | -------------------- | ----------------------------------------------------------------- |
-| GET       | `/api/courses/`      | список курсов (с количеством и уроками, поддерживается пагинация) |
-| POST      | `/api/courses/`      | создать курс                                                      |
-| GET       | `/api/courses/<id>/` | получить курс                                                     |
-| PUT/PATCH | `/api/courses/<id>/` | обновить курс                                                     |
-| DELETE    | `/api/courses/<id>/` | удалить курс                                                      |
+| Метод     | URL                                        | Описание                                                          |
+| --------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| GET       | `/api/materials/courses/`                  | список курсов (с количеством и уроками, поддерживается пагинация) |
+| POST      | `/api/materials/courses/`                  | создать курс                                                      |
+| GET       | `/api/materials/courses/<id>/`             | получить курс                                                     |
+| PUT/PATCH | `/api/materials/courses/<id>/`             | обновить курс                                                     |
+| DELETE    | `/api/materials/courses/<id>/`             | удалить курс                                                      |
+| POST      | `/api/materials/courses/<id>/subscribe/`   | подписаться на курс                                               |
+| POST      | `/api/materials/courses/<id>/unsubscribe/` | отписаться от курса                                               |
 
 
 
@@ -161,13 +181,15 @@ python manage.py runserver
 
 
 ### Платежи (ViewSet + фильтрация)
-| Метод     | URL                   | Описание        |
-| --------- | --------------------- | --------------- |
-| GET       | `/api/payments/`      | список платежей |
-| POST      | `/api/payments/`      | создать запись  |
-| GET       | `/api/payments/<id>/` | получить запись |
-| PUT/PATCH | `/api/payments/<id>/` | изменить        |
-| DELETE    | `/api/payments/<id>/` | удалить         |
+| Метод     | URL                                        | Описание                       |
+| --------- | ------------------------------------------ | ------------------------------ |
+| GET       | `/api/users/payments/`                     | список платежей                |
+| POST      | `/api/users/payments/buy/`                 | создать Stripe-платёж и сессию |
+| GET       | `/api/users/payments/<id>/`                | получить запись                |
+| PUT/PATCH | `/api/users/payments/<id>/`                | изменить                       |
+| DELETE    | `/api/users/payments/<id>/`                | удалить                        |
+| GET       | `/api/users/payments/status/<session_id>/` | получить статус Stripe-сессии  |
+
 
 
 ### Пример фикстуры платежей [payments.json](users%2Ffixtures%2Fpayments.json)
@@ -197,7 +219,12 @@ ___
 "pytest (>=9.0.1,<10.0.0)",
 "pytest-django (>=4.11.1,<5.0.0)",
 "coverage (>=7.11.3,<8.0.0)"
-
+"drf-spectacular (>=0.29.0,<0.30.0)",
+"drf-spectacular-sidecar (>=2025.10.1,<2026.0.0)",
+"stripe (>=14.0.0,<15.0.0)",
+"drf-yasg (>=1.21.11,<2.0.0)",
+"celery (>=5.5.3,<6.0.0)",
+"redis (>=7.1.0,<8.0.0)"
 ```
 
 ___

@@ -47,9 +47,7 @@ class LessonsAndSubscriptionTests(APITestCase):
         self.client.force_authenticate(None)
 
     def test_create_lesson_disallow_non_youtube(self):
-        """
-        Проверка корректной работы пагинации при выводе списка уроков
-        """
+        """Проверка корректной работы пагинации при выводе списка уроков"""
 
         self.client.force_authenticate(self.user1)
         bad = {"name": "Bad", "course": self.course_id, "video_link": "https://some-edu-platform.com/course/abc"}

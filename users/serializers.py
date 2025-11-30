@@ -5,7 +5,9 @@ from .models import CourseSubscription, Payment, User
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    """Сериализатор для регистрации пользователя"""
+    """
+    Сериализатор для регистрации пользователя
+    """
 
     password = serializers.CharField(write_only=True, required=True, min_length=5)
 
@@ -24,7 +26,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    """Сериализатор платежей"""
+    """
+    Сериализатор платежей
+    """
 
     class Meta:
         model = Payment
@@ -33,7 +37,9 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор пользователя с историей платежей"""
+    """
+    Сериализатор пользователя с историей платежей
+    """
 
     payments = PaymentSerializer(many=True, read_only=True)
 
@@ -55,7 +61,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CourseSubscriptionSerializer(serializers.ModelSerializer):
-    """Сериализатор для подписки"""
+    """
+    Сериализатор для подписки
+    """
 
     class Meta:
         model = CourseSubscription

@@ -5,7 +5,9 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    """Менеджер пользователей без username, авторизация по email"""
+    """
+    Менеджер пользователей без username, авторизация по email
+    """
 
     use_in_migrations = True
 
@@ -29,7 +31,9 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    """Модель пользователя"""
+    """
+    Модель пользователя
+    """
 
     username = None
     email = models.EmailField(unique=True, verbose_name="Email")
@@ -48,7 +52,9 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
-    """Модель платежа"""
+    """
+    Модель платежа
+    """
 
     PAYMENT_METHODS = [
         ("cash", "Наличные"),

@@ -7,7 +7,10 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def create_stripe_product(name: str) -> str:
-    """Создание продукта в Stripe"""
+    """
+    Создание продукта в Stripe
+    """
+
     try:
         product = stripe.Product.create(
             name=name,
@@ -18,7 +21,10 @@ def create_stripe_product(name: str) -> str:
 
 
 def create_stripe_price(product_id: str, amount: float, currency: str = "rub") -> str:
-    """Создание цены. amount — в рублях"""
+    """
+    Создание цены. amount — в рублях
+    """
+
     try:
         price = stripe.Price.create(
             product=product_id,
@@ -31,7 +37,10 @@ def create_stripe_price(product_id: str, amount: float, currency: str = "rub") -
 
 
 def create_stripe_session(price_id: str, success_url: str, cancel_url: str) -> Tuple[str, str]:
-    """Создание платёжной сессии"""
+    """
+    Создание платёжной сессии
+    """
+
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
@@ -51,6 +60,9 @@ def create_stripe_session(price_id: str, success_url: str, cancel_url: str) -> T
 
 
 def get_stripe_session_status(session_id):
-    """Получение статуса платежа"""
+    """
+    Получение статуса платежа
+    """
+
     session = stripe.checkout.Session.retrieve(session_id)
     return {"status": session.payment_status}

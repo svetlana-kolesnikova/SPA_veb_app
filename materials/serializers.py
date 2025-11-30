@@ -6,7 +6,9 @@ from .validators import VideoLinkValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Lesson"""
+    """
+    Сериализатор модели Lesson
+    """
 
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
     video_link = serializers.URLField(
@@ -20,16 +22,16 @@ class LessonSerializer(serializers.ModelSerializer):
         validators = [VideoLinkValidator(field="video_link")]
 
     def create(self, validated_data):
-        """
-        Автоматически назначаем владельца урока
-        """
+        """Автоматически назначаем владельца урока"""
         request = self.context.get("request")
         validated_data["owner"] = request.user
         return super().create(validated_data)
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Course с уроками и их количеством"""
+    """
+    Сериализатор модели Course с уроками и их количеством
+    """
 
     lessons = LessonSerializer(many=True, read_only=True)
     lesson_count = serializers.SerializerMethodField(read_only=True)
