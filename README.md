@@ -36,6 +36,11 @@ poetry shell
 ### 3. Настроить .env файл
 Удалить из названия файла 
 [.env_sample](.env_sample)    "_sample" 
+```bash
+cp .env_sample .env
+```
+Необходимо заполнить переменные окружения.
+
 
 ### 4. Применить миграции
 ```bash
@@ -55,7 +60,7 @@ ___
 ## Docker
 
 ### Dockerfile
-Файл Dockerfile находится в корне проекта и используется для сборки образов всех сервисов (web, celery, beat).
+Файл [Dockerfile](Dockerfile) находится в корне проекта и используется для сборки образов всех сервисов (web, celery, beat).
 
 
 ### Docker Compose

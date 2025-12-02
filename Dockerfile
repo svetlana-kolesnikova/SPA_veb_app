@@ -1,5 +1,5 @@
 # Базовый образ Python
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y \
@@ -24,6 +24,3 @@ COPY . /app
 
 # Открываем порт
 EXPOSE 8000
-
-# Команда по умолчанию
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
