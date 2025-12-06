@@ -17,7 +17,7 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock* /app/
 
 # Устанавливаем зависимости без виртуального окружения
-RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
+RUN poetry config virtualenvs.create false && poetry install --no-root
 
 # Копируем весь проект
 COPY . /app
