@@ -34,7 +34,13 @@ poetry install
 poetry shell
 ```
 ### 3. Настроить .env файл
-[.env_sample](.env_sample)
+Удалить из названия файла 
+[.env_sample](.env_sample)    "_sample" 
+```bash
+cp .env_sample .env
+```
+Необходимо заполнить переменные окружения.
+
 
 ### 4. Применить миграции
 ```bash
@@ -50,14 +56,29 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
+___
+## Docker
 
-### 7. Запустить Celery (для email-уведомлений)
+### Dockerfile
+Файл [Dockerfile](Dockerfile) находится в корне проекта и используется для сборки образов всех сервисов (web, celery, beat).
+
+
+### Docker Compose
+Файл [docker-compose.yaml](docker-compose.yaml) подключает все сервисы и переменные окружения из .env:
 ```bash
-celery -A config worker -l info
-celery -A config beat -l info
+docker-compose up --build
 ```
 
----
+### Сервисы после запуска:
+| Сервис   | Описание                                 | Порт |
+| -------- | ---------------------------------------- | ---- |
+| `web`    | Django backend                           | 8000 |
+| `db`     | PostgreSQL                               | 5432 |
+| `redis`  | Redis для Celery                         | 6379 |
+| `celery` | Worker Celery для асинхронных задач      | —    |
+| `beat`   | Планировщик периодических задач (Celery) | —    |
+
+___
 
 ## Приложения
 
