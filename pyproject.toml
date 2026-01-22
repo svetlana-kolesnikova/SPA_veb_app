@@ -1,31 +1,31 @@
-[project]
+[tool.poetry]
 name = "spa-veb-app"
 version = "0.1.0"
+package-mode = false
 description = ""
-authors = [
-    {name = "svetlana-kolesnikova",email = "sv.ps1286@gmail.com"}
-]
+authors = ["svetlana-kolesnikova <sv.ps1286@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "django (>=5.2.8,<6.0.0)",
-    "djangorestframework (>=3.16.1,<4.0.0)",
-    "pillow (>=12.0.0,<13.0.0)",
-    "dotenv (>=0.9.9,<0.10.0)",
-    "psycopg2 (>=2.9.11,<3.0.0)",
-    "django-filter (>=25.2,<26.0)",
-    "djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
-    "ipython (>=9.7.0,<10.0.0)",
-    "pytest (>=9.0.1,<10.0.0)",
-    "pytest-django (>=4.11.1,<5.0.0)",
-    "coverage (>=7.11.3,<8.0.0)",
-    "drf-spectacular (>=0.29.0,<0.30.0)",
-    "drf-spectacular-sidecar (>=2025.10.1,<2026.0.0)",
-    "stripe (>=14.0.0,<15.0.0)",
-    "drf-yasg (>=1.21.11,<2.0.0)",
-    "celery (>=5.5.3,<6.0.0)",
-    "redis (>=7.1.0,<8.0.0)"
-]
+
+[tool.poetry.dependencies]
+python = ">=3.13"
+django = ">=5.2.8,<6.0.0"
+djangorestframework = ">=3.16.1,<4.0.0"
+pillow = ">=12.0.0,<13.0.0"
+python-dotenv = ">=1.0.0,<2.0.0"
+psycopg2 = ">=2.9.11,<3.0.0"
+django-filter = ">=25.2,<26.0"
+djangorestframework-simplejwt = ">=5.5.1,<6.0.0"
+ipython = ">=9.7.0,<10.0.0"
+pytest = ">=9.0.1,<10.0.0"
+pytest-django = ">=4.11.1,<5.0.0"
+coverage = ">=7.11.3,<8.0.0"
+drf-spectacular = ">=0.29.0,<0.30.0"
+drf-spectacular-sidecar = ">=2025.10.1,<2026.0.0"
+stripe = ">=14.0.0,<15.0.0"
+drf-yasg = ">=1.21.11,<2.0.0"
+celery = ">=5.5.3,<6.0.0"
+redis = ">=7.1.0,<8.0.0"
+
 
 
 [build-system]
